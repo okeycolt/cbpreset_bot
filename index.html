@@ -17,13 +17,16 @@
                 <div class="title">Vocal Preset: "Pro Silver"</div>
                 <div class="price">499 ₴ / 15 USDT</div>
             </div>
+            
             <button class="details-btn" onclick="togglePlugins('plugins1')">Список плагинов</button>
+            
             <div id="plugins1" class="plugin-list">
                 <div class="plugin-item">✓ FabFilter Pro-Q 3</div>
                 <div class="plugin-item">✓ Waves CLA-76</div>
                 <div class="plugin-item">✓ iZotope Nectar 3</div>
                 <div class="plugin-item">✓ Valhalla VintageVerb</div>
             </div>
+            
             <button class="buy-btn" onclick="openModal('preset_silver', '499 ₴ / 15 USDT')">Купить</button>
         </div>
 
@@ -32,12 +35,15 @@
                 <div class="title">Сведение & Мастеринг</div>
                 <div class="price">1500 ₴ / 40 USDT</div>
             </div>
+
             <button class="details-btn" onclick="togglePlugins('plugins2')">Что входит?</button>
+            
             <div id="plugins2" class="plugin-list">
                 <div class="plugin-item">✓ Тюн вокала (Melodyne)</div>
-                <div class="plugin-item">✓ Тайминг дорожек</div>
-                <div class="plugin-item">✓ Мастеринг под стриминги</div>
+                <div class="plugin-item">✓ Тайминг и чистка дорожек</div>
+                <div class="plugin-item">✓ Мастеринг под площадки</div>
             </div>
+            
             <button class="buy-btn" onclick="openModal('mixing_service', '1500 ₴ / 40 USDT')">Заказать</button>
         </div>
     </div>
@@ -46,20 +52,30 @@
         <div class="modal-content glass-card">
             <h3 class="title">Способ оплаты</h3>
             <p class="price" id="modal-price" style="margin-bottom: 20px;"></p>
+            
             <button class="buy-btn" onclick="selectPayment('card')" style="margin-bottom: 12px;">💳 Карта / Apple Pay</button>
             <button class="buy-btn" onclick="selectPayment('crypto')">💎 Криптовалюта (USDT)</button>
+            
             <button class="details-btn" onclick="closeModal()" style="margin-top: 15px; border: none;">Отмена</button>
         </div>
     </div>
 
     <script>
+        // Инициализация Telegram WebApp
         let tg = window.Telegram.WebApp;
         let selectedProduct = '';
-        tg.expand();
+
+        // Сообщаем Telegram, что приложение готово и его можно отображать
+        tg.ready();
+        tg.expand(); // Разворачиваем на весь экран
 
         function togglePlugins(id) {
             let list = document.getElementById(id);
-            list.style.display = list.style.display === 'block' ? 'none' : 'block';
+            if (list.style.display === 'block') {
+                list.style.display = 'none';
+            } else {
+                list.style.display = 'block';
+            }
         }
 
         function openModal(product_id, price) {
@@ -73,8 +89,19 @@
         }
 
         function selectPayment(method) {
-            tg.sendData(selectedProduct + '|' + method);
-            tg.close();
+            try {
+                // Формируем строку данных для бота
+                const dataToSend = selectedProduct + '|' + method;
+                
+                // Важно: sendData работает только если приложение открыто через KeyboardButton 
+                // или Inline-кнопку. Она отправляет данные и ЗАКРЫВАЕТ Mini App.
+                tg.sendData(dataToSend);
+                
+            } catch (error) {
+                console.error("Ошибка при отправке данных:", error);
+                // Если произошла ошибка, хотя бы закроем окно
+                tg.close();
+            }
         }
     </script>
 </body>
