@@ -3,67 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Preset Shop</title>
+    <title>Audio Store</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
 
-    <h2 class="main-title">Твои Пресеты & Сведение</h2>
+    <div class="container">
+        <h2 class="main-title">Audio Store</h2>
 
-    <div class="glass-card">
-        <div class="card-header">
-            <div class="title">Vocal Preset: "Pro Silver"</div>
-            <div class="price">499 ₴ / 15 USDT</div>
+        <div class="glass-card">
+            <div class="card-header">
+                <div class="title">Vocal Preset: "Pro Silver"</div>
+                <div class="price">499 ₴ / 15 USDT</div>
+            </div>
+            <button class="details-btn" onclick="togglePlugins('plugins1')">Список плагинов</button>
+            <div id="plugins1" class="plugin-list">
+                <div class="plugin-item">✓ FabFilter Pro-Q 3</div>
+                <div class="plugin-item">✓ Waves CLA-76</div>
+                <div class="plugin-item">✓ iZotope Nectar 3</div>
+                <div class="plugin-item">✓ Valhalla VintageVerb</div>
+            </div>
+            <button class="buy-btn" onclick="openModal('preset_silver', '499 ₴ / 15 USDT')">Купить</button>
         </div>
-        
-        <button class="details-btn" onclick="togglePlugins('plugins1')">Показать плагины</button>
-        
-        <div id="plugins1" class="plugin-list">
-            <div class="plugin-item">✓ FabFilter Pro-Q 3</div>
-            <div class="plugin-item">✓ Waves CLA-76</div>
-            <div class="plugin-item">✓ iZotope Nectar 3</div>
-            <div class="plugin-item">✓ Valhalla VintageVerb</div>
+
+        <div class="glass-card">
+            <div class="card-header">
+                <div class="title">Сведение & Мастеринг</div>
+                <div class="price">1500 ₴ / 40 USDT</div>
+            </div>
+            <button class="details-btn" onclick="togglePlugins('plugins2')">Что входит?</button>
+            <div id="plugins2" class="plugin-list">
+                <div class="plugin-item">✓ Тюн вокала (Melodyne)</div>
+                <div class="plugin-item">✓ Тайминг дорожек</div>
+                <div class="plugin-item">✓ Мастеринг под стриминги</div>
+            </div>
+            <button class="buy-btn" onclick="openModal('mixing_service', '1500 ₴ / 40 USDT')">Заказать</button>
         </div>
-        
-        <button class="buy-btn" onclick="buy()">Купить сейчас</button>
     </div>
 
-    <div class="glass-card">
-        <div class="card-header">
-            <div class="title">Полное сведение & Мастеринг</div>
-            <div class="price">1500 ₴ / 40 USDT</div>
+    <div id="payment-modal" class="modal">
+        <div class="modal-content glass-card">
+            <h3 class="title">Способ оплаты</h3>
+            <p class="price" id="modal-price" style="margin-bottom: 20px;"></p>
+            <button class="buy-btn" onclick="selectPayment('card')" style="margin-bottom: 12px;">💳 Карта / Apple Pay</button>
+            <button class="buy-btn" onclick="selectPayment('crypto')">💎 Криптовалюта (USDT)</button>
+            <button class="details-btn" onclick="closeModal()" style="margin-top: 15px; border: none;">Отмена</button>
         </div>
-
-        <button class="details-btn" onclick="togglePlugins('plugins2')">Что входит?</button>
-        
-        <div id="plugins2" class="plugin-list">
-            <div class="plugin-item">✓ Коррекция (Autotune/Melodyne)</div>
-            <div class="plugin-item">✓ Эквализация и динамика</div>
-            <div class="plugin-item">✓ Мастеринг под площадки</div>
-        </div>
-        
-        <button class="buy-btn" onclick="buy()">Заказать</button>
     </div>
 
     <script>
         let tg = window.Telegram.WebApp;
+        let selectedProduct = '';
         tg.expand();
 
         function togglePlugins(id) {
             let list = document.getElementById(id);
-            // Плавное переключение через JS
-            if (list.style.display === 'block') {
-                list.style.display = 'none';
-            } else {
-                list.style.display = 'block';
-            }
+            list.style.display = list.style.display === 'block' ? 'none' : 'block';
         }
 
-        function buy() {
-            // В будущем здесь будет логика оплаты
-            tg.MainButton.setText("Переход к оплате...");
-            tg.MainButton.show();
+        function openModal(product_id, price) {
+            selectedProduct = product_id;
+            document.getElementById('modal-price').innerText = price;
+            document.getElementById('payment-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('payment-modal').style.display = 'none';
+        }
+
+        function selectPayment(method) {
+            tg.sendData(selectedProduct + '|' + method);
+            tg.close();
         }
     </script>
 </body>
